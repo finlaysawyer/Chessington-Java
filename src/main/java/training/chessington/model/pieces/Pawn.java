@@ -46,8 +46,6 @@ public class Pawn extends AbstractPiece {
     }
 
     private boolean nextSquareClear(Coordinates coords, Board board, int difference) {
-        if (coords.getCol() == 0 || coords.getCol() == 7) { return false; }
-
         if (colour.equals(PlayerColour.BLACK)) {
             if (coords.getRow() == 7 || board.get(coords.plus(difference, 0)) != null) {
                 return false;
@@ -62,6 +60,7 @@ public class Pawn extends AbstractPiece {
     }
 
     private boolean canCaptureLeft(Coordinates coords, Board board) {
+        if (coords.getCol() == 0) { return false; }
         if (colour.equals(PlayerColour.BLACK)) {
             Piece leftPiece = board.get(coords.plus(1, -1));
             if (leftPiece != null && leftPiece.getColour().equals(PlayerColour.WHITE)) {
@@ -78,6 +77,7 @@ public class Pawn extends AbstractPiece {
     }
 
     private boolean canCaptureRight(Coordinates coords, Board board) {
+        if (coords.getCol() == 7) { return false; }
         if (colour.equals(PlayerColour.BLACK)) {
             Piece rightPiece = board.get(coords.plus(1, 1));
             if (rightPiece != null && rightPiece.getColour().equals(PlayerColour.WHITE)) {
