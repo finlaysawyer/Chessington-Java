@@ -17,23 +17,14 @@ public class Pawn extends AbstractPiece {
     public List<Move> getAllowedMoves(Coordinates from, Board board) {
         List<Move> moves = new ArrayList<>();
 
-        if (colour.equals(PlayerColour.BLACK)) {
-            if (inStartingPosition(from)) {
-                Move whiteMoveTwo = new Move(from, from.plus(2, 0));
-                moves.add(whiteMoveTwo);
-            }
+        if (nextSquareClear(from, board, 1)) {
+            Move blackMoveOne = new Move(from, generateCoords(colour, from, 1));
+            moves.add(blackMoveOne);
+        }
 
-            Move whiteMove = new Move(from, from.plus(1, 0));
-            moves.add(whiteMove);
-
-        } else {
-            if (inStartingPosition(from)) {
-                Move blackMoveTwo = new Move(from, from.plus(-2, 0));
-                moves.add(blackMoveTwo);
-            }
-
-            Move blackMove = new Move(from, from.plus(-1, 0));
-            moves.add(blackMove);
+        if (inStartingPosition(from) && nextSquareClear(from, board, 2)) {
+            Move startingMove = new Move(from, generateCoords(colour, from, 2));
+            moves.add(startingMove);
         }
 
         return moves;
@@ -42,5 +33,18 @@ public class Pawn extends AbstractPiece {
     private boolean inStartingPosition(Coordinates coords) {
         if (coords.getRow() == 1 && colour.equals(PlayerColour.BLACK)) return true;
         return coords.getRow() == 6 && colour.equals(PlayerColour.WHITE);
+    }
+
+    private boolean nextSquareClear(Coordinates coords, Board board, int difference) {
+        if (colour.equals(PlayerColour.BLACK) && board.get(coords.plus(difference, 0)) != null) return false;
+        return !colour.equals(PlayerColour.WHITE) || board.get(coords.plus(-difference, 0)) == null;
+    }
+
+    private Coordinates generateCoords(PlayerColour colour, Coordinates coords, int difference) {
+        if (colour.equals(PlayerColour.BLACK)) {
+            return new Coordinates(coords.getRow() + difference, coords.getCol());
+        } else {
+            return new Coordinates(coords.getRow() - difference, coords.getCol());
+        }
     }
 }
