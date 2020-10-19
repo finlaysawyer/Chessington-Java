@@ -18,14 +18,25 @@ public class Pawn extends AbstractPiece {
         List<Move> moves = new ArrayList<>();
 
         if (nextSquareClear(from, board, 1)) {
-            Move moveOne = new Move(from, generateCoords(colour, from, 1));
+            Move moveOne = new Move(from, generateCoords(colour, from, 1, 0));
             moves.add(moveOne);
+
+            if (canCaptureLeft(from, board)) {
+                Move captureLeft = new Move(from, generateCoords(colour, from, 1, -1));
+                moves.add(captureLeft);
+            }
+
+            if (canCaptureRight(from, board)) {
+                Move captureRight = new Move(from, generateCoords(colour, from, 1, 1));
+                moves.add(captureRight);
+            }
         }
 
         if (inStartingPosition(from) && nextSquareClear(from, board, 2)) {
-            Move startingMove = new Move(from, generateCoords(colour, from, 2));
+            Move startingMove = new Move(from, generateCoords(colour, from, 2, 0));
             moves.add(startingMove);
         }
+
         return moves;
     }
 
@@ -35,6 +46,8 @@ public class Pawn extends AbstractPiece {
     }
 
     private boolean nextSquareClear(Coordinates coords, Board board, int difference) {
+        if (coords.getCol() == 0 || coords.getCol() == 7) { return false; }
+
         if (colour.equals(PlayerColour.BLACK)) {
             if (coords.getRow() == 7 || board.get(coords.plus(difference, 0)) != null) {
                 return false;
@@ -48,11 +61,43 @@ public class Pawn extends AbstractPiece {
         return true;
     }
 
-    private Coordinates generateCoords(PlayerColour colour, Coordinates coords, int difference) {
+    private boolean canCaptureLeft(Coordinates coords, Board board) {
         if (colour.equals(PlayerColour.BLACK)) {
-            return new Coordinates(coords.getRow() + difference, coords.getCol());
+            Piece leftPiece = board.get(coords.plus(1, -1));
+            if (leftPiece != null && leftPiece.getColour().equals(PlayerColour.WHITE)) {
+                return true;
+            }
+        }
+        if (colour.equals(PlayerColour.WHITE)) {
+            Piece leftPiece = board.get(coords.plus(-1, -1));
+            if (leftPiece != null && leftPiece.getColour().equals(PlayerColour.BLACK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean canCaptureRight(Coordinates coords, Board board) {
+        if (colour.equals(PlayerColour.BLACK)) {
+            Piece rightPiece = board.get(coords.plus(1, 1));
+            if (rightPiece != null && rightPiece.getColour().equals(PlayerColour.WHITE)) {
+                return true;
+            }
+        }
+        if (colour.equals(PlayerColour.WHITE)) {
+            Piece rightPiece = board.get(coords.plus(-1, 1));
+            if (rightPiece != null && rightPiece.getColour().equals(PlayerColour.BLACK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Coordinates generateCoords(PlayerColour colour, Coordinates coords, int differenceY, int differenceX) {
+        if (colour.equals(PlayerColour.BLACK)) {
+            return new Coordinates(coords.getRow() + differenceY, coords.getCol() + differenceX);
         } else {
-            return new Coordinates(coords.getRow() - difference, coords.getCol());
+            return new Coordinates(coords.getRow() - differenceY, coords.getCol() + differenceX);
         }
     }
 }
