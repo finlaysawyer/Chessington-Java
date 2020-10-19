@@ -18,15 +18,14 @@ public class Pawn extends AbstractPiece {
         List<Move> moves = new ArrayList<>();
 
         if (nextSquareClear(from, board, 1)) {
-            Move blackMoveOne = new Move(from, generateCoords(colour, from, 1));
-            moves.add(blackMoveOne);
+            Move moveOne = new Move(from, generateCoords(colour, from, 1));
+            moves.add(moveOne);
         }
 
         if (inStartingPosition(from) && nextSquareClear(from, board, 2)) {
             Move startingMove = new Move(from, generateCoords(colour, from, 2));
             moves.add(startingMove);
         }
-
         return moves;
     }
 
@@ -36,8 +35,17 @@ public class Pawn extends AbstractPiece {
     }
 
     private boolean nextSquareClear(Coordinates coords, Board board, int difference) {
-        if (colour.equals(PlayerColour.BLACK) && board.get(coords.plus(difference, 0)) != null) return false;
-        return !colour.equals(PlayerColour.WHITE) || board.get(coords.plus(-difference, 0)) == null;
+        if (colour.equals(PlayerColour.BLACK)) {
+            if (coords.getRow() == 7 || board.get(coords.plus(difference, 0)) != null) {
+                return false;
+            }
+        }
+        if (colour.equals(PlayerColour.WHITE)) {
+            if (coords.getRow() == 0 || board.get(coords.plus(-difference, 0)) != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Coordinates generateCoords(PlayerColour colour, Coordinates coords, int difference) {
