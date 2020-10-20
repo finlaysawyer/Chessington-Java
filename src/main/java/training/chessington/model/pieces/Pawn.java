@@ -17,9 +17,12 @@ public class Pawn extends AbstractPiece {
     public List<Move> getAllowedMoves(Coordinates from, Board board) {
         List<Move> moves = new ArrayList<>();
 
-        if (nextSquareClear(from, board, 1)) {
-            Move moveOne = new Move(from, generateCoords(colour, from, 1, 0));
-            moves.add(moveOne);
+        try {
+
+            if (nextSquareClear(from, board, 1)) {
+                Move moveOne = new Move(from, generateCoords(colour, from, 1, 0));
+                moves.add(moveOne);
+            }
 
             if (canCaptureLeft(from, board)) {
                 Move captureLeft = new Move(from, generateCoords(colour, from, 1, -1));
@@ -30,12 +33,15 @@ public class Pawn extends AbstractPiece {
                 Move captureRight = new Move(from, generateCoords(colour, from, 1, 1));
                 moves.add(captureRight);
             }
-        }
 
-        if (inStartingPosition(from) && nextSquareClear(from, board, 2)) {
-            Move startingMove = new Move(from, generateCoords(colour, from, 2, 0));
-            moves.add(startingMove);
-        }
+            if (inStartingPosition(from) && nextSquareClear(from, board, 2)) {
+                Move startingMove = new Move(from, generateCoords(colour, from, 2, 0));
+                moves.add(startingMove);
+            }
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+                // Skip Move
+            }
 
         return moves;
     }
